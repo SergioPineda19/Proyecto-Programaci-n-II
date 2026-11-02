@@ -38,10 +38,17 @@ public class Jugador {
         this.puntos = 0;
         this.partidasHeroes = 0;
         this.partidasVillanos = 0;
+        
+        if (username==null||username.trim().isEmpty()) {
+            throw new IllegalArgumentException("El usuario no puede estar vacio");
+        }
+        if (password==null||password.trim().isEmpty()) {
+            throw new IllegalArgumentException("La contraseña no puede estar vacia");
+        }
     }
     
-    
-    
-    
-    
+    public boolean verificarPassword(String password){
+        return this.password.equals(password);   
+    }
+   
 }

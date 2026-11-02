@@ -8,7 +8,7 @@
  *
  * @author segio
  */
-public class Pieza {
+public abstract class Pieza {
     //Atributos
     private String nombre;
     private int rango;
@@ -33,9 +33,8 @@ public class Pieza {
     public void ocultar(){
         revelada=false;
     }
-    public boolean puedeMoverse(){
-        return true;
-    }
+    public abstract boolean puedeMoverse();
+        
     
     public String recibirAtaque(Pieza atacante){
         if (this.rango==1 && atacante.getRango()==10) {
