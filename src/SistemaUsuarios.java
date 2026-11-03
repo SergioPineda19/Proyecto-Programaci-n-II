@@ -8,6 +8,64 @@
  *
  * @author segio
  */
+
 public class SistemaUsuarios {
+    private Jugador[]jugadores;
+    private int cantidadJugadores;
+    private Jugador jugadorActual;
+    
+    public SistemaUsuarios(){
+        jugadores=new Jugador[100];
+        cantidadJugadores=0;
+        jugadorActual=null;
+    }
+    
+    public void registrarJugador(String usuario, String password){
+        if (cantidadJugadores>=jugadores.length) {
+            throw new IllegalStateException("No hay espacio para mas jugadores");
+        }
+        if (buscarJugador(usuario)!=null) {
+            throw new IllegalArgumentException("El usuario ya existe");
+        }
+        Jugador nuevo=new Jugador(usuario,password);
+        jugadores[cantidadJugadores]=nuevo;
+        cantidadJugadores++;
+    }
+    
+    public Jugador buscarJugador(String usuario){
+            for (int i = 0; i < cantidadJugadores; i++) {
+                if (jugadores[i].getUsername().equals(usuario)) {
+                    return jugadores[i];
+                }
+            }
+            return null;
+    }
+    
+    public boolean iniciarSesion(String usuario, String password){
+        if (jugadorActual!= null) {
+            throw new IllegalStateException("Ya existe una sesion iniciada");
+        }
+        Jugador encontrado=buscarJugador(usuario);
+        if (encontrado==null) {
+            return false;
+        }
+        if (encontrado.verificarPassword(password)) {
+            jugadorActual=encontrado;
+            return true;
+        }
+        return false;
+    }
+    
+    public Jugador getJugadorActual(){
+        return jugadorActual;
+    }
+    
+    public void cerrarSesion(){
+        if (jugadorActual==null) {
+            throw new IllegalArgumentException("No hay una sesion iniciada");
+        }
+        jugadorActual=null;
+    }
+    
     
 }
