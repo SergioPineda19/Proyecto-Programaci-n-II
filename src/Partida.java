@@ -18,6 +18,12 @@ public class Partida {
     private EstadoPartida estado;
 
     public Partida(Jugador jugador1, Jugador jugador2) {
+        if (jugador1==null||jugador2==null) {
+            throw new IllegalArgumentException("Los jugadores no pueden ser nulos");
+        }
+        if (jugador1==jugador2) {
+            throw new IllegalArgumentException("Un jugador no puede jugar contra si mismo");
+        }
         this.jugador1 = jugador1;
         this.jugador2 = jugador2;
         this.jugadorHeroes = jugador1;
@@ -25,9 +31,14 @@ public class Partida {
         this.turno = jugador1; 
         this.ganador = null;
         this.estado = EstadoPartida.EN_CURSO;
+        jugadorHeroes.registrarPartida(Bando.HEROE);
+        jugadorVillanos.registrarPartida(Bando.VILLANOS);
     }
     
     public void cambiarTurno(){
+        if (estado==EstadoPartida.FINALIZADA) {
+            throw new IllegalStateException("No se puede cambiar el turno debido a que la partida ya finalizo");
+        }
         if (estado==EstadoPartida.EN_CURSO) {
             if (turno==jugador1) {
                 turno=jugador2;
@@ -41,12 +52,15 @@ public class Partida {
         return turno;
     }
     private void finalizarPartida(Jugador ganador){
-        if (estado==EstadoPartida.EN_CURSO) {
-            if (ganador==jugador1||ganador==jugador2) {
-                this.ganador=ganador;
-                estado=EstadoPartida.FINALIZADA;
-            } 
-        }  
+        if (estado==EstadoPartida.FINALIZADA) {
+            throw new IllegalStateException("La partida ya ha finalizado");
+        }
+        if (ganador!=jugador1&&ganador!=jugador2) {
+            throw new IllegalArgumentException("El ganador no pertenece a esta partida");
+        }
+        this.ganador=ganador;
+        estado=EstadoPartida.FINALIZADA;
+        ganador.sumarPuntos(100);
     }
     public Jugador getGanador(){
         return ganador;

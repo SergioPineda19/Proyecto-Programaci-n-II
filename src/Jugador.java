@@ -50,5 +50,25 @@ public class Jugador {
     public boolean verificarPassword(String password){
         return this.password.equals(password);   
     }
+    
+    public void sumarPuntos(int cantidad){
+        if (cantidad<=0) {
+            throw new IllegalArgumentException("Los puntos deben ser mayores que cero");
+        }
+        puntos+=cantidad;
+    }
+    
+    public void registrarPartida(Bando bando){
+        if (bando==null) {
+            throw new IllegalArgumentException("El bando no puede estar vacio");
+        }
+        if (bando==Bando.HEROE) {
+            partidasHeroes++;
+        }else{
+            partidasVillanos++;
+        }
+        
+    
+    }
    
 }
