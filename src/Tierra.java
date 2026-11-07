@@ -1,3 +1,7 @@
+
+import enums.ResultadoCombate;
+import enums.Bando;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -17,7 +21,7 @@ public class Tierra extends Pieza {
         return false;
     }
     @Override
-    public String recibirAtaque(Pieza atacante){
-        return atacante.getNombre()+ " Captura la Tierra. Gana el equipo de los: "+atacante.getBando();
+    public ResultadoCombate recibirAtaque(Pieza atacante){
+        return ResultadoCombate.GANA_ATACANTE;
     }
 }

@@ -1,3 +1,7 @@
+
+import enums.EstadoPartida;
+import enums.Bando;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -84,6 +88,25 @@ public class Partida {
         }
         if (ganador!=null) {
             finalizarPartida(ganador);
+        }
+    }
+    
+    public void verificarGanador(Tablero tablero){
+        if (estado==EstadoPartida.FINALIZADA) {
+            return;
+        }
+        Bando bando=tablero.getBandoGanador();
+        if (bando!=null) {
+            Jugador jugadorGanador=obtenerJugadorBando(bando);
+            finalizarPartida(jugadorGanador);
+        }
+    }
+    
+    public Bando obtenerBandoTurno(){
+        if (turno==jugadorHeroes) {
+            return Bando.HEROE;
+        }else{
+            return Bando.VILLANOS;
         }
     }
      

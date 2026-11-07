@@ -1,3 +1,7 @@
+
+import enums.ResultadoCombate;
+import enums.Bando;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -36,22 +40,25 @@ public abstract class Pieza {
     public abstract boolean puedeMoverse();
         
     
-    public String recibirAtaque(Pieza atacante){
-        if (this.rango==1 && atacante.getRango()==10) {
-            return this.getNombre()+" Elimina a "+atacante.getNombre();
+    public ResultadoCombate recibirAtaque(Pieza atacante){
+        if (atacante.rango==1 && this.getRango()==10) {
+            return ResultadoCombate.GANA_ATACANTE;
         }
-        if (this.rango>atacante.getRango()) {
-            return this.getNombre()+" Elimina a "+atacante.getNombre();
-        }else if (this.rango<atacante.getRango()) {
-            return atacante.getNombre()+" Elimina a "+this.getNombre();
+        if (atacante.getRango()>this.rango) {
+            return ResultadoCombate.GANA_ATACANTE;
+        }else if (atacante.getRango()<this.rango) {
+            return ResultadoCombate.GANA_DEFENSOR;
         }else{
-            return "Empate, ambas piezas son eliminadas";
+            return ResultadoCombate.EMPATE;
         }
     }
     
-    public String atacar(Pieza enemiga){
+    public ResultadoCombate atacar(Pieza enemiga){
+        if (enemiga==null) {
+            throw new IllegalArgumentException("El enemigo no puede ser nulo");
+        }
         if (this.bando==enemiga.getBando()) {
-            return "No puedes atacar a tus compañeros.";
+            throw new IllegalArgumentException("No puedes atacar a tus compañeros");
         }
         return enemiga.recibirAtaque(this);
     }
@@ -62,6 +69,6 @@ public abstract class Pieza {
         this.rango = rango;
         this.bando = bando;
         this.revelada = false;
-    }
+    } 
     
 }

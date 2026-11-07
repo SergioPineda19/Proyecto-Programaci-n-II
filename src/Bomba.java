@@ -1,3 +1,7 @@
+
+import enums.ResultadoCombate;
+import enums.Bando;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -18,11 +22,11 @@ public class Bomba extends Pieza{
     }
     
     @Override
-    public String recibirAtaque(Pieza atacante){
+    public ResultadoCombate recibirAtaque(Pieza atacante){
         if (atacante.getRango()==3) {
-            return atacante.getNombre()+"Elimina a "+this.getNombre();
-        }else{
-            return this.getNombre()+"Elimina a "+atacante.getNombre();
+            return ResultadoCombate.GANA_ATACANTE;
         }
+        return ResultadoCombate.GANA_DEFENSOR;
+        
     }
 }
