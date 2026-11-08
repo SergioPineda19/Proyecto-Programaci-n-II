@@ -20,6 +20,7 @@ public class RegistroPartida {
     private Bando bandoPerdedor;
     private MotivoVictoria motivo;
     private Calendar fecha;
+    private Partida partidaOriginal;
     
     public RegistroPartida(Partida partida){
         if (partida==null) {
@@ -39,6 +40,7 @@ public class RegistroPartida {
         }
         motivo=partida.getMotivoVictoria();
         fecha=partida.getFechaFinalizacion();
+        this.partidaOriginal = partida;
     }
     
     
@@ -65,5 +67,26 @@ public class RegistroPartida {
     public Calendar getFecha() {
         return (Calendar) fecha.clone();
     }
+    
+    public Partida getPartidaOriginal() {
+        return partidaOriginal;
+    }
+    
+    public boolean ganoJugador(Jugador jugador){
+        if (jugador==null) {
+            throw new IllegalArgumentException("El jugador no puede ser nulo");
+        }
+        return ganador==jugador;
+    }
+    
+    public String obtenerDescripcion() {
+        String descripcion = "Ganador: " + ganador.getUsername();
+        descripcion += " | Perdedor: " + perdedor.getUsername();
+        descripcion += " | Bando ganador: " + bandoGanador;
+        descripcion += " | Motivo: " + motivo;
+        return descripcion;
+    }
+
+
 
 }

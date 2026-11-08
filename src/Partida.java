@@ -25,6 +25,7 @@ public class Partida {
     private EstadoPartida estado;
     private MotivoVictoria motivoVictoria;
     private Calendar fechaFinalizacion;
+    private SistemaUsuarios sistemaUsuarios;
 
     public Partida(Jugador jugador1, Jugador jugador2) {
         if (jugador1==null||jugador2==null) {
@@ -44,6 +45,7 @@ public class Partida {
         jugadorVillanos.registrarPartida(Bando.VILLANOS);
         motivoVictoria=null;
         fechaFinalizacion=null;
+        this.sistemaUsuarios=sistemaUsuarios;
     }
     
     public void cambiarTurno(){
@@ -69,10 +71,14 @@ public class Partida {
         if (ganador!=jugador1&&ganador!=jugador2) {
             throw new IllegalArgumentException("El ganador no pertenece a esta partida");
         }
+        if (motivoVictoria!=MotivoVictoria.CAPTURAR_TIERRA&&motivoVictoria!=MotivoVictoria.ELIMINACION) {
+            throw new IllegalStateException("No se ha establecido un motivo de victoria valido");
+        }
         this.ganador=ganador;
         estado=EstadoPartida.FINALIZADA;
         fechaFinalizacion=Calendar.getInstance();
         ganador.sumarPuntos(100);
+        sistemaUsuarios.registrarPartida(this);
     }
     
     public Jugador getGanador(){
@@ -213,6 +219,7 @@ public class Partida {
         estado=EstadoPartida.FINALIZADA;
         fechaFinalizacion=Calendar.getInstance();
         motivoVictoria=MotivoVictoria.RENDICION;
+        sistemaUsuarios.registrarPartida(this);
     }
     
     public MotivoVictoria getMotivoVictoria() {

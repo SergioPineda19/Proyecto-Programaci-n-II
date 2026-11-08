@@ -15,6 +15,7 @@ public class SistemaUsuarios {
     private Jugador jugadorActual;
     private RegistroPartida[]historial=new RegistroPartida[1000];
     private int cantidadRegistros=0;
+    private Partida partidaOriginal;
     
     public SistemaUsuarios(){
         jugadores=new Jugador[100];
@@ -61,7 +62,7 @@ public class SistemaUsuarios {
     public Jugador getJugadorActual(){
         return jugadorActual;
     }
-    
+     
     public void cerrarSesion(){
         if (jugadorActual==null) {
             throw new IllegalArgumentException("No hay una sesion iniciada");
@@ -75,6 +76,11 @@ public class SistemaUsuarios {
         }
         if (!partida.isTerminada()) {
             throw new IllegalStateException("La partida no ha terminado");
+        }
+        for (int i = 0; i < cantidadRegistros; i++) {
+            if (historial[i].getPartidaOriginal()==partida) {
+                return;
+            }
         }
         if (cantidadRegistros>=historial.length) {
             throw new IllegalStateException("El historial esta lleno");
@@ -90,6 +96,37 @@ public class SistemaUsuarios {
     
     public int getCantidadRegistros(){
         return cantidadRegistros;
+    }
+    
+    
+    public RegistroPartida[] obtenerHistorialJugador(Jugador jugador) {
+        if (jugador == null) {
+            throw new IllegalArgumentException("El jugador no puede ser nulo");
+        }
+        int cantidad = 0;
+        for (int i = 0; i < cantidadRegistros; i++) {
+            if (historial[i].getGanador() == jugador ||
+                historial[i].getPerdedor() == jugador) {
+                cantidad++;
+            }
+        }
+        RegistroPartida[] registros = new RegistroPartida[cantidad];
+        int posicion = 0;
+        for (int i = cantidadRegistros - 1; i >= 0; i--) {
+            if (historial[i].getGanador() == jugador ||
+                historial[i].getPerdedor() == jugador) {
+                registros[posicion] = historial[i];
+                posicion++;
+            }
+        }
+        return registros;
+    }
+    
+    public RegistroPartida[]obtenerMiHistorial(){
+        if (jugadorActual==null) {
+            throw new IllegalStateException("No hay una sesion iniciada");
+        }
+        return obtenerHistorialJugador(jugadorActual);
     }
     
     
