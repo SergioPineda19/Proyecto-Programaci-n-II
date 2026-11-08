@@ -193,4 +193,38 @@ public class Tablero {
             cantidadVencidasVillanos++;
         }
     }
+    
+    //Recursivo
+    private int contarPiezasMoviles(Bando bando,int posicion){
+        if (posicion==100) {
+            return 0;
+        }
+        int fila=posicion/10;
+        int columna=posicion%10;
+        Pieza pieza=casillas[fila][columna];
+        int cantidad=0;
+        if (pieza!=null&&pieza.getBando()==bando&&pieza.puedeMoverse()) {
+            cantidad=1;
+        }
+        return cantidad+contarPiezasMoviles(bando,posicion+1);
+    }
+    
+    public int contarPiezasMoviles(Bando bando){
+        if (bando==null) {
+            throw new IllegalArgumentException("El bando no puede ser nulo");
+        }
+        return contarPiezasMoviles(bando,0);
+    }
+    
+    public Bando verificarVictoriaPorEliminacion(){
+        int heroes=contarPiezasMoviles(Bando.HEROE);
+        int villanos=contarPiezasMoviles(Bando.VILLANOS);
+        if (heroes==0&&villanos>0) {
+            return Bando.VILLANOS;
+        }
+        if (villanos==0&&heroes>0) {
+            return Bando.HEROE;
+        }
+        return null;
+    }
 }

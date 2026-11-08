@@ -96,9 +96,13 @@ public class Partida {
         if (estado==EstadoPartida.FINALIZADA) {
             return;
         }
-        Bando bando=tablero.getBandoGanador();
-        if (bando!=null) {
-            Jugador jugadorGanador=obtenerJugadorBando(bando);
+        
+        Bando bandoGanador=tablero.getBandoGanador();
+        if (bandoGanador==null) {
+            bandoGanador=tablero.verificarVictoriaPorEliminacion();
+        }
+        if (bandoGanador!=null) {
+            Jugador jugadorGanador=obtenerJugadorBando(bandoGanador);
             finalizarPartida(jugadorGanador);
         }
     }
