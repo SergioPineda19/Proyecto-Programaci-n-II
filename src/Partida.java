@@ -3,6 +3,7 @@ import enums.EstadoPartida;
 import enums.Bando;
 import enums.MotivoVictoria;
 import enums.ResultadoCombate;
+import java.util.Calendar;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -23,6 +24,7 @@ public class Partida {
     private Jugador ganador;
     private EstadoPartida estado;
     private MotivoVictoria motivoVictoria;
+    private Calendar fechaFinalizacion;
 
     public Partida(Jugador jugador1, Jugador jugador2) {
         if (jugador1==null||jugador2==null) {
@@ -41,6 +43,7 @@ public class Partida {
         jugadorHeroes.registrarPartida(Bando.HEROE);
         jugadorVillanos.registrarPartida(Bando.VILLANOS);
         motivoVictoria=null;
+        fechaFinalizacion=null;
     }
     
     public void cambiarTurno(){
@@ -68,14 +71,29 @@ public class Partida {
         }
         this.ganador=ganador;
         estado=EstadoPartida.FINALIZADA;
+        fechaFinalizacion=Calendar.getInstance();
         ganador.sumarPuntos(100);
     }
+    
     public Jugador getGanador(){
         return ganador;
     }
+    
+    public Jugador getPerdedor(){
+        if (ganador==null) {
+            return null;
+        }
+        if (ganador==jugadorHeroes) {
+            return jugadorVillanos;
+        }else{
+            return jugadorHeroes;
+        }
+    }
+    
     public boolean isTerminada(){
         return estado==EstadoPartida.FINALIZADA;
     }
+    
     public Jugador obtenerJugadorBando(Bando bando){
         if (bando==bando.HEROE) {
             return jugadorHeroes;
@@ -96,13 +114,21 @@ public class Partida {
     }
     
     public void verificarGanador(Tablero tablero){
+        if (tablero==null) {
+            throw new IllegalArgumentException("El tablero no puede ser nulo");
+        }
         if (estado==EstadoPartida.FINALIZADA) {
             return;
         }
-        
         Bando bandoGanador=tablero.getBandoGanador();
-        if (bandoGanador==null) {
+        if (bandoGanador!=null) {
+
+            motivoVictoria=MotivoVictoria.CAPTURAR_TIERRA;
+        } else {
             bandoGanador=tablero.verificarVictoriaPorEliminacion();
+            if (bandoGanador!=null) {
+                motivoVictoria=MotivoVictoria.ELIMINACION;
+            }
         }
         if (bandoGanador!=null) {
             Jugador jugadorGanador=obtenerJugadorBando(bandoGanador);
@@ -185,12 +211,19 @@ public class Partida {
         ganador.sumarPuntos(3);
         this.ganador=ganador;
         estado=EstadoPartida.FINALIZADA;
+        fechaFinalizacion=Calendar.getInstance();
         motivoVictoria=MotivoVictoria.RENDICION;
     }
     
-    
     public MotivoVictoria getMotivoVictoria() {
         return motivoVictoria;
+    }
+    
+    public Calendar getFechaFinalizacion(){
+        if (fechaFinalizacion==null) {
+            return null;
+        }
+        return(Calendar)fechaFinalizacion.clone();
     }
 
     

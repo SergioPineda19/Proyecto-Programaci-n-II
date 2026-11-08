@@ -13,6 +13,8 @@ public class SistemaUsuarios {
     private Jugador[]jugadores;
     private int cantidadJugadores;
     private Jugador jugadorActual;
+    private RegistroPartida[]historial=new RegistroPartida[1000];
+    private int cantidadRegistros=0;
     
     public SistemaUsuarios(){
         jugadores=new Jugador[100];
@@ -65,6 +67,29 @@ public class SistemaUsuarios {
             throw new IllegalArgumentException("No hay una sesion iniciada");
         }
         jugadorActual=null;
+    }
+    
+    public void registrarPartida(Partida partida){
+        if (partida==null) {
+            throw new IllegalArgumentException("La partida no puede ser nula");
+        }
+        if (!partida.isTerminada()) {
+            throw new IllegalStateException("La partida no ha terminado");
+        }
+        if (cantidadRegistros>=historial.length) {
+            throw new IllegalStateException("El historial esta lleno");
+        }
+        RegistroPartida registro=new RegistroPartida(partida);
+        historial[cantidadRegistros]=registro;
+        cantidadRegistros++;
+    }
+    
+    public RegistroPartida[]getHistorial(){
+        return historial;
+    }
+    
+    public int getCantidadRegistros(){
+        return cantidadRegistros;
     }
     
     
