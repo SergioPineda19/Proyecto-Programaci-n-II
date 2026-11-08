@@ -25,6 +25,9 @@ public class Tablero {
         if (fila<0||fila>10||columna<0||columna>10) {
             throw new IllegalArgumentException("Posicion invalida");
         }
+        if (esZonaProhibida(fila,columna)) {
+            throw new IllegalArgumentException("No se puede colocar una pieza en las zonas prohibidas");
+        }
         if (pieza==null) {
             throw new IllegalArgumentException("La pieza no puede ser nula");
         }
@@ -64,9 +67,24 @@ public class Tablero {
         if (filaOrigen<0||filaOrigen>=10||columnaOrigen<0||columnaOrigen>=10||filaDestino<0||filaDestino>=10||columnaDestino<0||columnaDestino>=10) {
             return false;
         }
+        if (esZonaProhibida(filaOrigen,columnaOrigen)||(esZonaProhibida(filaDestino,columnaDestino))) {
+            return false;
+        }
         int diferenciaFilas=Math.abs(filaDestino-filaOrigen);
         int diferenciaColumnas=Math.abs(columnaDestino-columnaOrigen);
-        return(diferenciaFilas==1&&diferenciaColumnas==0)||(diferenciaFilas==0&&diferenciaColumnas==1);
+        boolean unaCasilla=(diferenciaFilas==1&&diferenciaColumnas==0)||(diferenciaFilas==0&&diferenciaColumnas==1);
+        if (unaCasilla) {
+            return true;
+        }
+        Pieza pieza=casillas[filaOrigen][columnaOrigen];
+        if (pieza==null||pieza.getRango()!=2||!pieza.puedeMoverse()) {
+            return false;
+        }
+        boolean lineaRecta=(diferenciaFilas>0&&diferenciaColumnas==0)||(diferenciaFilas==0&&diferenciaColumnas>0);
+        if (!lineaRecta) {
+            return false;
+        }
+        return caminoDespejado(filaOrigen,columnaOrigen,filaDestino,columnaDestino);
     }
     
     public void moverPieza(int filaOrigen,int columnaOrigen, int filaDestino, int columnaDestino){
@@ -82,6 +100,11 @@ public class Tablero {
         }
         if (!casillaVacia(filaDestino,columnaDestino)) {
             throw new IllegalStateException("La casilla del destino esta ocupada");
+        }
+        int diferenciaFilas=Math.abs(filaDestino-filaOrigen);
+        int diferenciaColumnas=Math.abs(columnaDestino-columnaOrigen);
+        if (pieza.getRango()==2&&(diferenciaFilas>1||diferenciaColumnas>1)) {
+            pieza.revelar();
         }
         retirarPieza(filaOrigen,columnaOrigen);
         colocarPieza(pieza,filaDestino,columnaDestino);
@@ -120,5 +143,24 @@ public class Tablero {
     
     public Bando getBandoGanador(){
         return bandoGanador;
+    }
+    
+    public boolean esZonaProhibida(int fila, int columna){
+        return(fila==4||fila==5)&&((columna==2||columna==3)||(columna==6||columna==7));
+    }
+    //Piezas de rango 2
+    public boolean caminoDespejado(int filaOrigen,int columnaOrigen,int filaDestino,int columnaDestino){
+        int pasoFila=Integer.compare(filaDestino, filaOrigen);
+        int pasoColumna=Integer.compare(columnaDestino, columnaOrigen);
+        int fila=filaOrigen+pasoFila;
+        int columna=columnaOrigen+pasoColumna;
+        while(fila!=filaDestino||columna!=columnaDestino){
+            if (!casillaVacia(fila,columna)||esZonaProhibida(fila,columna)) {
+                return false;
+            }
+            fila+=pasoFila;
+            columna+=pasoColumna;
+        }
+        return true;
     }
 }
