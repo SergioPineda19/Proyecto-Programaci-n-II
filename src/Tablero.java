@@ -14,10 +14,18 @@ import enums.Bando;
  */
 public class Tablero {
     private Pieza[][]casillas;
+    private Pieza[]piezasVencidasHeroes;
+    private Pieza[]piezasVencidasVillanos;
+    private int cantidadVencidasHeroes;
+    private int cantidadVencidasVillanos;
     private Bando bandoGanador;
     //Constructor
     public Tablero(){
         casillas=new Pieza[10][10];
+        piezasVencidasHeroes=new Pieza[40];
+        piezasVencidasVillanos=new Pieza[40];
+        cantidadVencidasHeroes=0;
+        cantidadVencidasVillanos=0;
         bandoGanador=null;
     }
     
@@ -111,32 +119,40 @@ public class Tablero {
     }
     
     public ResultadoCombate atacarPieza(int filaOrigen, int columnaOrigen, int filaDestino, int columnaDestino){
-        if (!movimientoValido(filaOrigen,columnaOrigen,filaDestino,columnaDestino)) {
-            throw new IllegalArgumentException("Ataque invalido");
+        if (!movimientoValido(filaOrigen, columnaOrigen,filaDestino, columnaDestino)) {
+            throw new IllegalArgumentException("Ataque inválido");
         }
-        Pieza atacante=obtenerPieza(filaOrigen, columnaOrigen);
-        Pieza defensor=obtenerPieza(filaDestino, columnaDestino);
-        if (atacante==null||defensor==null) {
+        int diferenciaFilas = Math.abs(filaDestino - filaOrigen);
+        int diferenciaColumnas = Math.abs(columnaDestino - columnaOrigen);
+        if (diferenciaFilas + diferenciaColumnas != 1) {
+            throw new IllegalArgumentException("Solo se puede atacar a una casilla adyacente");
+        }
+        Pieza atacante = obtenerPieza(filaOrigen, columnaOrigen);
+        Pieza defensor = obtenerPieza(filaDestino, columnaDestino);
+        if (atacante == null || defensor == null) {
             throw new IllegalStateException("Deben existir dos piezas para atacar");
         }
         if (!atacante.puedeMoverse()) {
             throw new IllegalStateException("Esta pieza no puede atacar");
         }
-        ResultadoCombate resultado=atacante.atacar(defensor);
-        //Condicion para ganar la partida
-        if (defensor instanceof Tierra&&resultado==ResultadoCombate.GANA_ATACANTE) {
-            bandoGanador=atacante.getBando();
+        ResultadoCombate resultado = atacante.atacar(defensor);
+        if (defensor instanceof Tierra &&
+                resultado == ResultadoCombate.GANA_ATACANTE) {
+            bandoGanador = atacante.getBando();
         }
-        if (resultado==ResultadoCombate.GANA_ATACANTE) {
+        if (resultado == ResultadoCombate.GANA_ATACANTE) {
+            registrarPiezaVencida(defensor);
             retirarPieza(filaDestino, columnaDestino);
             retirarPieza(filaOrigen, columnaOrigen);
             colocarPieza(atacante, filaDestino, columnaDestino);
-            
-        }else if(resultado==ResultadoCombate.GANA_DEFENSOR){
+        } else if (resultado == ResultadoCombate.GANA_DEFENSOR) {
+            registrarPiezaVencida(atacante);
             retirarPieza(filaOrigen, columnaOrigen);
-        }else{
-            retirarPieza(filaOrigen,columnaOrigen);
-            retirarPieza(filaDestino,columnaDestino);
+        } else {
+            registrarPiezaVencida(atacante);
+            registrarPiezaVencida(defensor);
+            retirarPieza(filaOrigen, columnaOrigen);
+            retirarPieza(filaDestino, columnaDestino);
         }
         return resultado;
     }
@@ -162,5 +178,19 @@ public class Tablero {
             columna+=pasoColumna;
         }
         return true;
+    }
+    
+    //Piezas Vencidas
+    public void registrarPiezaVencida(Pieza pieza){
+        if (pieza==null) {
+            throw new IllegalArgumentException("La pieza no puede ser nula");
+        }
+        if (pieza.getBando()==Bando.HEROE) {
+            piezasVencidasHeroes[cantidadVencidasHeroes]=pieza;
+            cantidadVencidasHeroes++;
+        }else{
+            piezasVencidasVillanos[cantidadVencidasVillanos]=pieza;
+            cantidadVencidasVillanos++;
+        }
     }
 }
