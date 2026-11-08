@@ -1,3 +1,6 @@
+
+import enums.Bando;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -129,5 +132,41 @@ public class SistemaUsuarios {
         return obtenerHistorialJugador(jugadorActual);
     }
     
+    public Jugador[] obtenerRanking() {
+        Jugador[] ranking = new Jugador[cantidadJugadores];
+        for (int i = 0; i < cantidadJugadores; i++) {
+            ranking[i] = jugadores[i];
+        }
+        for (int i = 0; i < ranking.length - 1; i++) {
+            for (int j = 0; j < ranking.length - 1 - i; j++) {
+                if (ranking[j].getPuntos() < ranking[j + 1].getPuntos()) {
+                    Jugador temporal = ranking[j];
+                    ranking[j] = ranking[j + 1];
+                    ranking[j + 1] = temporal;
+                }
+            }
+        }
+        return ranking;
+    }
     
+    public int getCantidadJugadores() {
+        return cantidadJugadores;
+    }
+    
+    public int getTotalBatallas() {
+        return cantidadRegistros;
+    }
+    
+    public int contarVictorias(Bando bando) {
+        if (bando == null) {
+            throw new IllegalArgumentException("El bando no puede ser nulo");
+        }
+        int victorias = 0;
+        for (int i = 0; i < cantidadRegistros; i++) {
+            if (historial[i].getBandoGanador() == bando) {
+                victorias++;
+            }
+        }
+        return victorias;
+    }
 }
