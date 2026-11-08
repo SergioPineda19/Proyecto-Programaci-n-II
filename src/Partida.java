@@ -1,6 +1,7 @@
 
 import enums.EstadoPartida;
 import enums.Bando;
+import enums.ResultadoCombate;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -108,6 +109,57 @@ public class Partida {
         }else{
             return Bando.VILLANOS;
         }
+    }
+    
+    public void validarTurno(Pieza pieza){
+        if (estado==EstadoPartida.FINALIZADA) {
+            throw new IllegalStateException("La partida ya termino");
+        }
+        if (pieza==null) {
+            throw new IllegalArgumentException("No hay ninguna pieza seleccionada");
+        }
+        if (pieza.getBando()!=obtenerBandoTurno()) {
+            throw new IllegalArgumentException("No es el turno de esta pieza");
+        }
+    }
+    
+    public void realizarMovimiento(Tablero tablero,int filaOrigen,int columnaOrigen,int filaDestino,int columnaDestino){
+        if (tablero==null) {
+            throw new IllegalArgumentException("El tablero no puede ser nulo");
+        }
+        Pieza pieza=tablero.obtenerPieza(filaOrigen, columnaOrigen);
+        validarTurno(pieza);
+        tablero.moverPieza(filaOrigen, columnaOrigen, filaDestino, columnaDestino);
+        cambiarTurno();
+    }
+    
+    public ResultadoCombate realizarAtaque(Tablero tablero, int filaOrigen,int columnaOrigen, int filaDestino, int columnaDestino){
+        if (tablero==null) {
+            throw new IllegalArgumentException("El tablero no puede ser nulo");
+        }
+        Pieza atacante=tablero.obtenerPieza(filaOrigen, columnaOrigen);
+        validarTurno(atacante);
+        ResultadoCombate resultado=tablero.atacarPieza(filaOrigen, columnaOrigen, filaDestino, columnaDestino);
+        verificarGanador(tablero);
+        if (estado==EstadoPartida.EN_CURSO) {
+            cambiarTurno();
+        }
+        return resultado;
+    }
+    
+    public void realizarJugada(Tablero tablero,int filaOrigen, int columnaOrigen, int filaDestino, int columnaDestino){
+        if (tablero==null) {
+            throw new IllegalArgumentException("El tablero no puede ser nulo");
+        }
+        if (tablero.casillaVacia(filaDestino, columnaDestino)) {
+            realizarMovimiento(tablero,filaOrigen,columnaOrigen,filaDestino,columnaDestino);
+        }else{
+            realizarAtaque(tablero,filaOrigen,columnaOrigen,filaDestino,columnaDestino);
+        }
+    }
+    
+    public boolean estaEnCurso(){
+        return estado==EstadoPartida.EN_CURSO;
     }
      
 }
