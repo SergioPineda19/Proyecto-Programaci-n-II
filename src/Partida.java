@@ -1,6 +1,7 @@
 
 import enums.EstadoPartida;
 import enums.Bando;
+import enums.MotivoVictoria;
 import enums.ResultadoCombate;
 
 /*
@@ -21,6 +22,7 @@ public class Partida {
     private Jugador turno;
     private Jugador ganador;
     private EstadoPartida estado;
+    private MotivoVictoria motivoVictoria;
 
     public Partida(Jugador jugador1, Jugador jugador2) {
         if (jugador1==null||jugador2==null) {
@@ -38,6 +40,7 @@ public class Partida {
         this.estado = EstadoPartida.EN_CURSO;
         jugadorHeroes.registrarPartida(Bando.HEROE);
         jugadorVillanos.registrarPartida(Bando.VILLANOS);
+        motivoVictoria=null;
     }
     
     public void cambiarTurno(){
@@ -165,5 +168,32 @@ public class Partida {
     public boolean estaEnCurso(){
         return estado==EstadoPartida.EN_CURSO;
     }
+    
+    public void rendirse(Jugador jugador){
+        if (estado==EstadoPartida.FINALIZADA) {
+            throw new IllegalStateException("La partida ya termino");
+        }
+        if (jugador!=jugadorHeroes&&jugador!=jugadorVillanos) {
+            throw new IllegalArgumentException("El jugador no existe en esta partida");
+        }
+        Jugador ganador;
+        if (jugador==jugadorHeroes) {
+            ganador=jugadorVillanos;
+        }else{
+            ganador=jugadorHeroes;
+        }
+        ganador.sumarPuntos(3);
+        this.ganador=ganador;
+        estado=EstadoPartida.FINALIZADA;
+        motivoVictoria=MotivoVictoria.RENDICION;
+    }
+    
+    
+    public MotivoVictoria getMotivoVictoria() {
+        return motivoVictoria;
+    }
+
+    
+    
      
 }

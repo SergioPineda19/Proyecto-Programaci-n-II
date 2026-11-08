@@ -10,5 +10,5 @@ package enums;
  * @author segio
  */
 public enum MotivoVictoria {
-    
+    CAPTURAR_TIERRA,ELIMINACION,RENDICION
 }
