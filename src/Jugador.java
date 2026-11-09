@@ -70,8 +70,17 @@ public class Jugador {
         }else{
             partidasVillanos++;
         }
-        
-    
     }
+        
+    public void cambiarPassword(String passwordActual, String passwordNueva) {
+        if (!verificarPassword(passwordActual)) {
+            throw new IllegalArgumentException("La contraseña actual es incorrecta");
+        }
+        if (passwordNueva == null || passwordNueva.length() != 5) {
+            throw new IllegalArgumentException("La nueva contraseña debe tener 5 caracteres");
+        }
+        this.password = passwordNueva;
+    }
+
    
 }

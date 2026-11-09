@@ -19,6 +19,7 @@ public class SistemaUsuarios {
     private RegistroPartida[]historial=new RegistroPartida[1000];
     private int cantidadRegistros=0;
     private Partida partidaOriginal;
+    private int totalUsuariosHistoricos = 0;
     
     public SistemaUsuarios(){
         jugadores=new Jugador[100];
@@ -36,8 +37,17 @@ public class SistemaUsuarios {
         Jugador nuevo=new Jugador(usuario,password);
         jugadores[cantidadJugadores]=nuevo;
         cantidadJugadores++;
+        totalUsuariosHistoricos++;
     }
     
+    public int getUsuariosActivos() {
+        return cantidadJugadores;
+    }
+
+    public int getTotalUsuariosHistoricos() {
+        return totalUsuariosHistoricos;
+    }
+
     public Jugador buscarJugador(String usuario){
             for (int i = 0; i < cantidadJugadores; i++) {
                 if (jugadores[i].getUsername().equals(usuario)) {
@@ -168,5 +178,38 @@ public class SistemaUsuarios {
             }
         }
         return victorias;
+    }
+    
+    public void cambiarPasswordActual(String actual, String nueva) {
+        if (jugadorActual == null) {
+            throw new IllegalStateException("No hay una sesión iniciada");
+        }
+        jugadorActual.cambiarPassword(actual, nueva);
+    }
+    
+    
+    public void eliminarCuenta(String password) {
+        if (jugadorActual == null) {
+            throw new IllegalStateException("No hay una sesión iniciada");
+        }
+        if (!jugadorActual.verificarPassword(password)) {
+            throw new IllegalArgumentException("Contraseña incorrecta");
+        }
+        int posicion = -1;
+        for (int i = 0; i < cantidadJugadores; i++) {
+            if (jugadores[i] == jugadorActual) {
+                posicion = i;
+                break;
+            }
+        }
+        if (posicion == -1) {
+            throw new IllegalStateException("No se encontró el jugador");
+        }
+        for (int i = posicion; i < cantidadJugadores - 1; i++) {
+            jugadores[i] = jugadores[i + 1];
+        }
+        cantidadJugadores--;
+        jugadores[cantidadJugadores] = null;
+        jugadorActual = null;
     }
 }

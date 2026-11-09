@@ -1,3 +1,5 @@
+package piezas;
+
 
 import enums.ResultadoCombate;
 import enums.Bando;

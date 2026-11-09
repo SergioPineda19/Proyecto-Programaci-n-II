@@ -1,4 +1,5 @@
 
+import piezas.Pieza;
 import enums.EstadoPartida;
 import enums.Bando;
 import enums.MotivoVictoria;

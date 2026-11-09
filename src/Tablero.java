@@ -1,6 +1,12 @@
 
+import piezas.Tierra;
+import piezas.Pieza;
 import enums.ResultadoCombate;
 import enums.Bando;
+import enums.Bando;
+import piezas.Pieza;
+import piezas.GeneradorPiezas;
+import java.util.Random;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -227,4 +233,98 @@ public class Tablero {
         }
         return null;
     }
+    
+    public void colocarPiezasIniciales() {
+        Pieza[] heroes = GeneradorPiezas.crearHeroes();
+        Pieza[] villanos = GeneradorPiezas.crearVillanos();
+        colocarBando(heroes, Bando.HEROE);
+        colocarBando(villanos, Bando.VILLANOS);
+    }
+    
+    
+    private void colocarBando(Pieza[] piezas, Bando bando) {
+        Random random = new Random();
+        int filaFinal;
+        if (bando == Bando.HEROE) {
+            filaFinal = 9;
+        } else {
+            filaFinal = 0;
+        }
+        int columnaTierra = random.nextInt(8) + 1;
+        colocarPieza(piezas[39], filaFinal, columnaTierra);
+        int filaInterior;
+        if (bando == Bando.HEROE) {
+            filaInterior = 8;
+        } else {
+            filaInterior = 1;
+        }
+        int bombasColocadas = 0;
+        int[][] posiciones = {
+            {filaFinal, columnaTierra - 1},
+            {filaFinal, columnaTierra + 1},
+            {filaInterior, columnaTierra},
+            {filaInterior, columnaTierra - 1},
+            {filaInterior, columnaTierra + 1}
+        };
+
+        for (int i = 0; i < posiciones.length; i++) {
+            int fila = posiciones[i][0];
+            int columna = posiciones[i][1];
+            if (columna >= 0 && columna < 10
+                    && casillaVacia(fila, columna)) {
+                colocarPieza(piezas[33 + bombasColocadas], fila, columna);
+                bombasColocadas++;
+            }
+        }
+        while (bombasColocadas < 6) {
+            int fila = filaFinal;
+            if (random.nextBoolean()) {
+                fila = filaInterior;
+            }
+            int columna = random.nextInt(10);
+            if (casillaVacia(fila, columna)) {
+                colocarPieza(piezas[33 + bombasColocadas],
+                        fila, columna);
+                bombasColocadas++;
+            }
+        }
+        int colocadas = 24;
+        while (colocadas <= 31) {
+            int fila;
+            if (bando == Bando.HEROE) {
+                fila = random.nextInt(2) + 6;
+            } else {
+                fila = random.nextInt(2) + 2;
+            }
+            int columna = random.nextInt(10);
+            if (casillaVacia(fila, columna)) {
+                colocarPieza(piezas[colocadas], fila, columna);
+                colocadas++;
+            }
+        }
+        for (int i = 0; i <= 32; i++) {
+            if (i >= 24 && i <= 31) {
+                continue;
+            }
+            boolean colocado = false;
+            while (!colocado) {
+                int fila;
+                if (bando == Bando.HEROE) {
+                    fila = random.nextInt(4) + 6;
+                } else {
+                    fila = random.nextInt(4);
+                }
+                int columna = random.nextInt(10);
+                if (casillaVacia(fila, columna)) {
+                    colocarPieza(piezas[i], fila, columna);
+                    colocado = true;
+                }
+            }
+        }
+    }
+
+    
+    
+
+
 }
