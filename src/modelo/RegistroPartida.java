@@ -1,6 +1,4 @@
 package modelo;
-
-
 import modelo.Partida;
 import modelo.Jugador;
 import enums.Bando;
@@ -90,7 +88,4 @@ public class RegistroPartida {
         descripcion += " | Motivo: " + motivo;
         return descripcion;
     }
-
-
-
 }

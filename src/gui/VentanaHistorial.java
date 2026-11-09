@@ -44,7 +44,7 @@ public class VentanaHistorial extends JFrame{
         titulo.setForeground(Color.WHITE);
         panel.add(titulo, BorderLayout.NORTH);
         String[] columnas = {
-            "Ganador", "Perdedor", "Motivo", "Fecha"
+            "Ganador", "Bando ganador","Perdedor", "Bando perdedor","Motivo", "Fecha"
         };
 
         modelo = new DefaultTableModel(columnas, 0) {
@@ -67,18 +67,22 @@ public class VentanaHistorial extends JFrame{
 
     private void cargarHistorial() {
         modelo.setRowCount(0);
-        Jugador actual = sistema.getJugadorActual();
-        RegistroPartida[] registros =sistema.obtenerHistorialJugador(actual);
+        Jugador actual=sistema.getJugadorActual();
+        RegistroPartida[] registros=sistema.obtenerHistorialJugador(actual);
         if (registros == null) {
             return;
         }
+        java.text.SimpleDateFormat formato=new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm");
         for (RegistroPartida registro : registros) {
             if (registro != null) {
+                String fecha = formato.format(registro.getFecha().getTime());
                 modelo.addRow(new Object[]{
                     registro.getGanador().getUsername(),
+                    registro.getBandoGanador(),
                     registro.getPerdedor().getUsername(),
+                    registro.getBandoPerdedor(),
                     registro.getMotivo(),
-                    registro.getFecha()
+                    fecha
                 });
             }
         }
