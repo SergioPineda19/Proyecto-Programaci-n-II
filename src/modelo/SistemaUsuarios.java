@@ -1,6 +1,4 @@
 package modelo;
-
-
 import modelo.RegistroPartida;
 import modelo.Partida;
 import modelo.Jugador;
@@ -33,14 +31,18 @@ public class SistemaUsuarios {
     }
     
     public void registrarJugador(String usuario, String password){
-        if (cantidadJugadores>=jugadores.length) {
-            throw new IllegalStateException("No hay espacio para mas jugadores");
+        if (usuario == null || usuario.trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre de usuario no puede estar vacío");
         }
-        if (buscarJugador(usuario)!=null) {
+        usuario = usuario.trim();
+        if (cantidadJugadores >= jugadores.length) {
+            throw new IllegalStateException("No hay espacio para más jugadores");
+        }
+        if (buscarJugador(usuario) != null) {
             throw new IllegalArgumentException("El usuario ya existe");
         }
-        Jugador nuevo=new Jugador(usuario,password);
-        jugadores[cantidadJugadores]=nuevo;
+        Jugador nuevo = new Jugador(usuario, password);
+        jugadores[cantidadJugadores] = nuevo;
         cantidadJugadores++;
         totalUsuariosHistoricos++;
     }
@@ -63,22 +65,24 @@ public class SistemaUsuarios {
     }
     
     public boolean iniciarSesion(String usuario, String password){
-        if (jugadorActual!= null) {
-            throw new IllegalStateException("Ya existe una sesion iniciada");
+        if (jugadorActual != null) {
+            throw new IllegalStateException("Ya existe una sesión iniciada");
         }
-        Jugador encontrado=buscarJugador(usuario);
-        if (encontrado==null) {
+        if (usuario == null || password == null) {
+            return false;
+        }
+        Jugador encontrado = buscarJugador(usuario.trim());
+        if (encontrado == null) {
             return false;
         }
         if (encontrado.verificarPassword(password)) {
-            jugadorActual=encontrado;
+            jugadorActual = encontrado;
             return true;
         }
         return false;
-    }
-    
-    public Jugador getJugadorActual(){
-        return jugadorActual;
+        }
+        public Jugador getJugadorActual(){
+            return jugadorActual;
     }
      
     public void cerrarSesion(){
@@ -197,25 +201,8 @@ public class SistemaUsuarios {
         if (jugadorActual == null) {
             throw new IllegalStateException("No hay una sesión iniciada");
         }
-        if (!jugadorActual.verificarPassword(password)) {
-            throw new IllegalArgumentException("Contraseña incorrecta");
-        }
-        int posicion = -1;
-        for (int i = 0; i < cantidadJugadores; i++) {
-            if (jugadores[i] == jugadorActual) {
-                posicion = i;
-                break;
-            }
-        }
-        if (posicion == -1) {
-            throw new IllegalStateException("No se encontró el jugador");
-        }
-        for (int i = posicion; i < cantidadJugadores - 1; i++) {
-            jugadores[i] = jugadores[i + 1];
-        }
-        cantidadJugadores--;
-        jugadores[cantidadJugadores] = null;
-        jugadorActual = null;
+
+        eliminarJugador(jugadorActual.getUsername(), password);
     }
     
     public void eliminarJugador(String usuario, String password) {
