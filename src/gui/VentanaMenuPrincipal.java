@@ -82,9 +82,9 @@ public class VentanaMenuPrincipal extends JFrame{
         });
         btnHistorial.addActionListener(e -> {new VentanaHistorial(sistema);
         });
-        btnRanking.addActionListener(e -> {JOptionPane.showMessageDialog(this,"");
+        btnRanking.addActionListener(e -> {new VentanaRanking(sistema);
         });
-        btnBatallas.addActionListener(e -> {JOptionPane.showMessageDialog(this,"");
+        btnBatallas.addActionListener(e -> {new VentanaBatallas(sistema);
         });
         btnPassword.addActionListener(e -> {new VentanaPerfil(sistema);
         });
