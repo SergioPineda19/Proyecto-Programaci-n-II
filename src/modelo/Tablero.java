@@ -1,3 +1,5 @@
+package modelo;
+
 
 import piezas.Tierra;
 import piezas.Pieza;
@@ -321,6 +323,14 @@ public class Tablero {
                 }
             }
         }
+    }
+    
+    public Pieza[] getPiezasVencidasHeroes() {
+        return piezasVencidasHeroes;
+    }
+
+    public Pieza[] getPiezasVencidasVillanos() {
+        return piezasVencidasVillanos;
     }
 
     

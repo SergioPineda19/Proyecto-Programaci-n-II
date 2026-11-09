@@ -1,4 +1,8 @@
+package modelo;
 
+
+import modelo.Partida;
+import modelo.Jugador;
 import enums.Bando;
 import enums.MotivoVictoria;
 import java.util.Calendar;

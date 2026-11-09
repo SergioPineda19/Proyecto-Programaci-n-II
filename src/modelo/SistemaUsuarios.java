@@ -1,4 +1,9 @@
+package modelo;
 
+
+import modelo.RegistroPartida;
+import modelo.Partida;
+import modelo.Jugador;
 import enums.Bando;
 
 /*
@@ -211,5 +216,46 @@ public class SistemaUsuarios {
         cantidadJugadores--;
         jugadores[cantidadJugadores] = null;
         jugadorActual = null;
+    }
+    
+    public void eliminarJugador(String usuario, String password) {
+        Jugador jugador = buscarJugador(usuario);
+        if (jugador == null || !jugador.verificarPassword(password)) {
+            throw new IllegalArgumentException("Usuario o contraseña incorrectos.");
+        }
+        int posicion = -1;
+        for (int i = 0; i < cantidadJugadores; i++) {
+            if (jugadores[i] == jugador) {
+                posicion = i;
+                break;
+            }
+        }
+        if (posicion == -1) {
+            throw new IllegalStateException("No se encontró la cuenta.");
+        }
+
+        int nuevosRegistros = 0;
+        for (int i = 0; i < cantidadRegistros; i++) {
+            RegistroPartida registro = historial[i];
+            if (registro.getGanador() != jugador&& registro.getPerdedor() != jugador) {
+                historial[nuevosRegistros] = registro;
+                nuevosRegistros++;
+            }
+        }
+
+        for (int i = nuevosRegistros; i < cantidadRegistros; i++) {
+            historial[i] = null;
+        }
+        cantidadRegistros = nuevosRegistros;
+
+        for (int i = posicion; i < cantidadJugadores - 1; i++) {
+            jugadores[i] = jugadores[i + 1];
+        }
+        cantidadJugadores--;
+        jugadores[cantidadJugadores] = null;
+
+        if (jugadorActual == jugador) {
+            jugadorActual = null;
+        }
     }
 }

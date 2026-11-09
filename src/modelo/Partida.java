@@ -1,4 +1,8 @@
+package modelo;
 
+
+import modelo.Jugador;
+import modelo.Tablero;
 import piezas.Pieza;
 import enums.EstadoPartida;
 import enums.Bando;
@@ -27,6 +31,16 @@ public class Partida {
     private MotivoVictoria motivoVictoria;
     private Calendar fechaFinalizacion;
     private SistemaUsuarios sistemaUsuarios;
+    
+    public Partida(Jugador jugador1, Jugador jugador2,
+        SistemaUsuarios sistemaUsuarios) {
+        this(jugador1, jugador2);
+        if (sistemaUsuarios == null) {
+            throw new IllegalArgumentException(
+                    "El sistema de usuarios no puede ser nulo.");
+        }
+        this.sistemaUsuarios = sistemaUsuarios;
+    }
 
     public Partida(Jugador jugador1, Jugador jugador2) {
         if (jugador1==null||jugador2==null) {
